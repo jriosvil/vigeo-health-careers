@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { collection, doc, setDoc, getDoc, getDocs, updateDoc, query, where } from 'firebase/firestore';
-import { db } from '../../../firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../../firebase/config';
 import { collections } from '../../../firebase/schema';
 import MobileNavbar from '../layout/MobileNavbar';
 
@@ -21,6 +22,7 @@ const MobileApplicationForm = () => {
   const [stagedFile, setStagedFile] = useState(null);
   const [documentName, setDocumentName] = useState('');
   const [documentType, setDocumentType] = useState('license');
+  const [uploadingFile, setUploadingFile] = useState(false);
   const fileInputRef = useRef(null);
 
   // Form data state
@@ -192,11 +194,13 @@ const MobileApplicationForm = () => {
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
       
-      // Clean documents array to ensure no File objects
+      // Documents now have URLs instead of base64 data
       const cleanDocuments = formData.documents.map(doc => ({
         displayName: doc.displayName || '',
         documentType: doc.documentType || 'other',
-        fileData: doc.fileData || '',
+        fileUrl: doc.fileUrl || doc.fileData || '', // Support both new and old format
+        fileName: doc.fileName || '',
+        fileSize: doc.fileSize || 0,
         uploadedAt: doc.uploadedAt || new Date().toISOString()
       }));
       
@@ -256,11 +260,13 @@ const MobileApplicationForm = () => {
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
       
-      // Clean documents array to ensure no File objects
+      // Documents now have URLs instead of base64 data
       const cleanDocuments = formData.documents.map(doc => ({
         displayName: doc.displayName || '',
         documentType: doc.documentType || 'other',
-        fileData: doc.fileData || '',
+        fileUrl: doc.fileUrl || doc.fileData || '', // Support both new and old format
+        fileName: doc.fileName || '',
+        fileSize: doc.fileSize || 0,
         uploadedAt: doc.uploadedAt || new Date().toISOString()
       }));
       
@@ -346,24 +352,80 @@ const MobileApplicationForm = () => {
     }));
   };
 
+  const compressImage = async (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Calculate new dimensions (max 800px width/height)
+          let width = img.width;
+          let height = img.height;
+          const maxSize = 800;
+          
+          if (width > height && width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convert to base64 with compression
+          const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+          resolve(compressedData);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleAddDocument = async () => {
     if (!stagedFile || !documentName.trim()) {
       alert('Please select a file and enter a document name');
       return;
     }
 
+    setUploadingFile(true);
     try {
-      const reader = new FileReader();
-      const fileData = await new Promise((resolve, reject) => {
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(stagedFile);
-      });
+      let fileToUpload = stagedFile;
+      
+      // Check if it's an image and needs compression (over 2MB)
+      if (stagedFile.type && stagedFile.type.startsWith('image/') && stagedFile.size > 2 * 1024 * 1024) {
+        // Compress large images
+        const compressedData = await compressImage(stagedFile);
+        // Convert base64 back to blob for upload
+        const response = await fetch(compressedData);
+        const blob = await response.blob();
+        fileToUpload = new File([blob], stagedFile.name, { type: 'image/jpeg' });
+      }
+      
+      // Upload to Firebase Storage - matching Firestore structure
+      const timestamp = Date.now();
+      const cleanDocName = documentName.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+      const fileName = `VIGEOHealthCareersWebsite/config/applications/${currentUser.uid}/${jobId}/documents/${timestamp}_${cleanDocName}`;
+      const storageRef = ref(storage, fileName);
+      
+      const uploadResult = await uploadBytes(storageRef, fileToUpload);
+      const downloadURL = await getDownloadURL(uploadResult.ref);
 
       const newDocument = {
         displayName: documentName.trim(),
         documentType: documentType,
-        fileData: fileData,
+        fileUrl: downloadURL,
+        fileName: fileName,
+        fileSize: fileToUpload.size,
         uploadedAt: new Date().toISOString()
       };
 
@@ -379,7 +441,9 @@ const MobileApplicationForm = () => {
       }
     } catch (error) {
       console.error('Error adding document:', error);
-      alert('Error adding document. Please try again.');
+      alert('Error uploading document. Please try again.');
+    } finally {
+      setUploadingFile(false);
     }
   };
 
@@ -1072,6 +1136,15 @@ const MobileApplicationForm = () => {
               <p style={{ fontSize: 'var(--mobile-text-sm)', color: 'var(--mobile-gray)', marginBottom: 'var(--mobile-spacing-lg)' }}>
                 Upload supporting documents such as resume, certificates, or licenses. This section is optional.
               </p>
+              <div style={{ 
+                background: '#e0f2fe', 
+                padding: 'var(--mobile-spacing-sm)', 
+                borderRadius: '8px', 
+                marginBottom: 'var(--mobile-spacing-md)',
+                fontSize: 'var(--mobile-text-xs)'
+              }}>
+                <strong>Note:</strong> Files are securely uploaded to cloud storage. Large images will be automatically compressed for faster uploads.
+              </div>
 
               {/* File Upload Section */}
               <div style={{ 
@@ -1121,9 +1194,9 @@ const MobileApplicationForm = () => {
                 <button 
                   onClick={handleAddDocument}
                   className="mobile-btn mobile-btn-secondary"
-                  disabled={!stagedFile || !documentName.trim()}
+                  disabled={!stagedFile || !documentName.trim() || uploadingFile}
                 >
-                  Add Document
+                  {uploadingFile ? 'Uploading...' : 'Add Document'}
                 </button>
               </div>
 
