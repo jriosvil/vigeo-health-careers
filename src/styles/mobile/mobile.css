@@ -456,24 +456,7 @@ body.mobile {
   user-select: none;
 }
 
-/* Mobile Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .mobile-page {
-    background: #0f172a;
-    color: #f1f5f9;
-  }
-  
-  .mobile-card {
-    background: #1e293b;
-    border: 1px solid #334155;
-  }
-  
-  .mobile-header,
-  .mobile-nav {
-    background: #1e293b;
-    border-color: #334155;
-  }
-}
+/* Dark Mode Disabled - Always Light Mode */
 
 /* Responsive breakpoints for larger mobile devices */
 @media (min-width: 375px) {

@@ -29,7 +29,7 @@ const MobileSignup = () => {
     setError('');
 
     try {
-      await signup(email, password, { firstName, lastName });
+      await signup(email, password, firstName, lastName);
       navigate('/mobile/jobs');
     } catch (error) {
       console.error('Signup error:', error);

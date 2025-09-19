@@ -338,7 +338,7 @@ const MobileApplicationForm = () => {
         displayName: documentName.trim(),
         documentType: documentType,
         fileData: fileData,
-        uploadedAt: new Date()
+        uploadedAt: new Date().toISOString()
       };
 
       setFormData(prev => ({
@@ -1122,7 +1122,7 @@ const MobileApplicationForm = () => {
                           {doc.displayName}
                         </p>
                         <p style={{ fontSize: 'var(--mobile-text-xs)', color: 'var(--mobile-gray)' }}>
-                          {doc.documentType?.replace('_', ' ')} • Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt.toDate ? doc.uploadedAt.toDate() : doc.uploadedAt).toLocaleDateString() : 'recently'}
+                          {doc.documentType?.replace('_', ' ')} • Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : 'recently'}
                         </p>
                       </div>
                       <button 
