@@ -364,6 +364,54 @@ const MobileApplicationForm = () => {
     }));
   };
 
+  const updateEducation = (index, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      education: prev.education.map((edu, i) => 
+        i === index ? { ...edu, [field]: value } : edu
+      )
+    }));
+  };
+
+  const removeEducation = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      education: prev.education.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateLicense = (index, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      licenses: prev.licenses.map((license, i) => 
+        i === index ? { ...license, [field]: value } : license
+      )
+    }));
+  };
+
+  const removeLicense = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      licenses: prev.licenses.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateEmployment = (index, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      employment: prev.employment.map((emp, i) => 
+        i === index ? { ...emp, [field]: value } : emp
+      )
+    }));
+  };
+
+  const removeEmployment = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      employment: prev.employment.filter((_, i) => i !== index)
+    }));
+  };
+
   if (loading) {
     return (
       <div className="mobile-page">
@@ -546,6 +594,558 @@ const MobileApplicationForm = () => {
           </div>
         );
 
+      case 2: // Emergency Contacts
+        return (
+          <div className="mobile-card">
+            <div className="mobile-card-header">
+              <h3 style={{ fontSize: 'var(--mobile-text-lg)', fontWeight: '600' }}>
+                Emergency Contacts
+              </h3>
+            </div>
+            <div className="mobile-card-body">
+              {/* Primary Emergency Contact */}
+              <h4 style={{ fontSize: 'var(--mobile-text-base)', fontWeight: '600', marginBottom: 'var(--mobile-spacing-md)' }}>
+                Primary Emergency Contact
+              </h4>
+
+              <div className="mobile-form-group">
+                <label className="mobile-form-label">Name *</label>
+                <input
+                  type="text"
+                  className="mobile-form-input"
+                  value={formData.emergency.primary.name}
+                  onChange={(e) => handleInputChange('emergency', 'primary.name', e.target.value)}
+                  placeholder="Full name"
+                  required
+                />
+              </div>
+
+              <div className="mobile-form-group">
+                <label className="mobile-form-label">Relationship *</label>
+                <input
+                  type="text"
+                  className="mobile-form-input"
+                  value={formData.emergency.primary.relationship}
+                  onChange={(e) => handleInputChange('emergency', 'primary.relationship', e.target.value)}
+                  placeholder="e.g., Spouse, Parent, Sibling"
+                  required
+                />
+              </div>
+
+              <div className="mobile-form-group">
+                <label className="mobile-form-label">Phone Number *</label>
+                <input
+                  type="tel"
+                  className="mobile-form-input"
+                  value={formData.emergency.primary.phone}
+                  onChange={(e) => handleInputChange('emergency', 'primary.phone', e.target.value)}
+                  placeholder="Phone number"
+                  required
+                />
+              </div>
+
+              {/* Secondary Emergency Contact */}
+              <h4 style={{ fontSize: 'var(--mobile-text-base)', fontWeight: '600', margin: 'var(--mobile-spacing-xl) 0 var(--mobile-spacing-md)' }}>
+                Secondary Emergency Contact (Optional)
+              </h4>
+
+              <div className="mobile-form-group">
+                <label className="mobile-form-label">Name</label>
+                <input
+                  type="text"
+                  className="mobile-form-input"
+                  value={formData.emergency.secondary.name}
+                  onChange={(e) => handleInputChange('emergency', 'secondary.name', e.target.value)}
+                  placeholder="Full name (optional)"
+                />
+              </div>
+
+              <div className="mobile-form-group">
+                <label className="mobile-form-label">Relationship</label>
+                <input
+                  type="text"
+                  className="mobile-form-input"
+                  value={formData.emergency.secondary.relationship}
+                  onChange={(e) => handleInputChange('emergency', 'secondary.relationship', e.target.value)}
+                  placeholder="Relationship (optional)"
+                />
+              </div>
+
+              <div className="mobile-form-group">
+                <label className="mobile-form-label">Phone Number</label>
+                <input
+                  type="tel"
+                  className="mobile-form-input"
+                  value={formData.emergency.secondary.phone}
+                  onChange={(e) => handleInputChange('emergency', 'secondary.phone', e.target.value)}
+                  placeholder="Phone number (optional)"
+                />
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3: // Education
+        return (
+          <div className="mobile-card">
+            <div className="mobile-card-header">
+              <h3 style={{ fontSize: 'var(--mobile-text-lg)', fontWeight: '600' }}>
+                Education History
+              </h3>
+              <button 
+                onClick={addEducation}
+                className="mobile-btn mobile-btn-outline"
+                style={{ padding: 'var(--mobile-spacing-sm) var(--mobile-spacing-md)', fontSize: 'var(--mobile-text-sm)' }}
+              >
+                Add Education
+              </button>
+            </div>
+            <div className="mobile-card-body">
+              {formData.education.length === 0 ? (
+                <p style={{ color: 'var(--mobile-gray)', textAlign: 'center', padding: 'var(--mobile-spacing-lg)' }}>
+                  No education records added yet. Click "Add Education" to get started.
+                </p>
+              ) : (
+                formData.education.map((edu, index) => (
+                  <div key={index} style={{ 
+                    background: '#f8fafc', 
+                    padding: 'var(--mobile-spacing-md)', 
+                    borderRadius: '8px', 
+                    marginBottom: 'var(--mobile-spacing-md)',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--mobile-spacing-md)' }}>
+                      <h4 style={{ fontSize: 'var(--mobile-text-base)', fontWeight: '600' }}>
+                        Education {index + 1}
+                      </h4>
+                      <button 
+                        onClick={() => removeEducation(index)}
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: 'var(--mobile-text-xs)'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">Degree/Certificate *</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={edu.degree}
+                        onChange={(e) => updateEducation(index, 'degree', e.target.value)}
+                        placeholder="e.g., Bachelor's, Associate's, High School"
+                      />
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">School Name *</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={edu.school}
+                        onChange={(e) => updateEducation(index, 'school', e.target.value)}
+                        placeholder="School/University name"
+                      />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--mobile-spacing-md)' }}>
+                      <div className="mobile-form-group">
+                        <label className="mobile-form-label">City</label>
+                        <input
+                          type="text"
+                          className="mobile-form-input"
+                          value={edu.city}
+                          onChange={(e) => updateEducation(index, 'city', e.target.value)}
+                          placeholder="City"
+                        />
+                      </div>
+
+                      <div className="mobile-form-group">
+                        <label className="mobile-form-label">State</label>
+                        <input
+                          type="text"
+                          className="mobile-form-input"
+                          value={edu.state}
+                          onChange={(e) => updateEducation(index, 'state', e.target.value)}
+                          placeholder="State"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">Graduation Date</label>
+                      <input
+                        type="month"
+                        className="mobile-form-input"
+                        value={edu.graduationDate}
+                        onChange={(e) => updateEducation(index, 'graduationDate', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        );
+
+      case 4: // Licenses
+        return (
+          <div className="mobile-card">
+            <div className="mobile-card-header">
+              <h3 style={{ fontSize: 'var(--mobile-text-lg)', fontWeight: '600' }}>
+                Professional Licenses
+              </h3>
+              <button 
+                onClick={addLicense}
+                className="mobile-btn mobile-btn-outline"
+                style={{ padding: 'var(--mobile-spacing-sm) var(--mobile-spacing-md)', fontSize: 'var(--mobile-text-sm)' }}
+              >
+                Add License
+              </button>
+            </div>
+            <div className="mobile-card-body">
+              <p style={{ fontSize: 'var(--mobile-text-sm)', color: 'var(--mobile-gray)', marginBottom: 'var(--mobile-spacing-lg)' }}>
+                Add any professional licenses or certifications. This section is optional.
+              </p>
+
+              {formData.licenses.length === 0 ? (
+                <p style={{ color: 'var(--mobile-gray)', textAlign: 'center', padding: 'var(--mobile-spacing-lg)' }}>
+                  No licenses added yet. Click "Add License" to add certifications.
+                </p>
+              ) : (
+                formData.licenses.map((license, index) => (
+                  <div key={index} style={{ 
+                    background: '#f8fafc', 
+                    padding: 'var(--mobile-spacing-md)', 
+                    borderRadius: '8px', 
+                    marginBottom: 'var(--mobile-spacing-md)',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--mobile-spacing-md)' }}>
+                      <h4 style={{ fontSize: 'var(--mobile-text-base)', fontWeight: '600' }}>
+                        License {index + 1}
+                      </h4>
+                      <button 
+                        onClick={() => removeLicense(index)}
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: 'var(--mobile-text-xs)'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">License Type *</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={license.type}
+                        onChange={(e) => updateLicense(index, 'type', e.target.value)}
+                        placeholder="e.g., RN, CNA, Physical Therapy"
+                      />
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">License Number</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={license.number}
+                        onChange={(e) => updateLicense(index, 'number', e.target.value)}
+                        placeholder="License number"
+                      />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--mobile-spacing-md)' }}>
+                      <div className="mobile-form-group">
+                        <label className="mobile-form-label">State</label>
+                        <input
+                          type="text"
+                          className="mobile-form-input"
+                          value={license.state}
+                          onChange={(e) => updateLicense(index, 'state', e.target.value)}
+                          placeholder="State"
+                        />
+                      </div>
+
+                      <div className="mobile-form-group">
+                        <label className="mobile-form-label">Expiration Date</label>
+                        <input
+                          type="date"
+                          className="mobile-form-input"
+                          value={license.expirationDate}
+                          onChange={(e) => updateLicense(index, 'expirationDate', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        );
+
+      case 5: // Employment
+        return (
+          <div className="mobile-card">
+            <div className="mobile-card-header">
+              <h3 style={{ fontSize: 'var(--mobile-text-lg)', fontWeight: '600' }}>
+                Employment History
+              </h3>
+              <button 
+                onClick={addEmployment}
+                className="mobile-btn mobile-btn-outline"
+                style={{ padding: 'var(--mobile-spacing-sm) var(--mobile-spacing-md)', fontSize: 'var(--mobile-text-sm)' }}
+              >
+                Add Employment
+              </button>
+            </div>
+            <div className="mobile-card-body">
+              <p style={{ fontSize: 'var(--mobile-text-sm)', color: 'var(--mobile-gray)', marginBottom: 'var(--mobile-spacing-lg)' }}>
+                Add your last three positions or recent employment history.
+              </p>
+
+              {formData.employment.length === 0 ? (
+                <p style={{ color: 'var(--mobile-gray)', textAlign: 'center', padding: 'var(--mobile-spacing-lg)' }}>
+                  No employment history added yet. Click "Add Employment" to get started.
+                </p>
+              ) : (
+                formData.employment.map((emp, index) => (
+                  <div key={index} style={{ 
+                    background: '#f8fafc', 
+                    padding: 'var(--mobile-spacing-md)', 
+                    borderRadius: '8px', 
+                    marginBottom: 'var(--mobile-spacing-md)',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--mobile-spacing-md)' }}>
+                      <h4 style={{ fontSize: 'var(--mobile-text-base)', fontWeight: '600' }}>
+                        Employment {index + 1}
+                      </h4>
+                      <button 
+                        onClick={() => removeEmployment(index)}
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: 'var(--mobile-text-xs)'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">Company Name *</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={emp.company}
+                        onChange={(e) => updateEmployment(index, 'company', e.target.value)}
+                        placeholder="Employer name"
+                      />
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">Position Title *</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={emp.position}
+                        onChange={(e) => updateEmployment(index, 'position', e.target.value)}
+                        placeholder="Job title"
+                      />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--mobile-spacing-md)' }}>
+                      <div className="mobile-form-group">
+                        <label className="mobile-form-label">Start Date *</label>
+                        <input
+                          type="date"
+                          className="mobile-form-input"
+                          value={emp.startDate}
+                          onChange={(e) => updateEmployment(index, 'startDate', e.target.value)}
+                        />
+                      </div>
+
+                      <div className="mobile-form-group">
+                        <label className="mobile-form-label">End Date</label>
+                        <input
+                          type="date"
+                          className="mobile-form-input"
+                          value={emp.endDate}
+                          onChange={(e) => updateEmployment(index, 'endDate', e.target.value)}
+                          placeholder="Leave blank if current"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">Supervisor Name</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={emp.supervisor}
+                        onChange={(e) => updateEmployment(index, 'supervisor', e.target.value)}
+                        placeholder="Supervisor name"
+                      />
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">Phone Number</label>
+                      <input
+                        type="tel"
+                        className="mobile-form-input"
+                        value={emp.phone}
+                        onChange={(e) => updateEmployment(index, 'phone', e.target.value)}
+                        placeholder="Contact phone"
+                      />
+                    </div>
+
+                    <div className="mobile-form-group">
+                      <label className="mobile-form-label">Reason for Leaving</label>
+                      <input
+                        type="text"
+                        className="mobile-form-input"
+                        value={emp.reason}
+                        onChange={(e) => updateEmployment(index, 'reason', e.target.value)}
+                        placeholder="Reason for leaving"
+                      />
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        );
+
+      case 6: // Documents
+        return (
+          <div className="mobile-card">
+            <div className="mobile-card-header">
+              <h3 style={{ fontSize: 'var(--mobile-text-lg)', fontWeight: '600' }}>
+                Supporting Documents
+              </h3>
+            </div>
+            <div className="mobile-card-body">
+              <p style={{ fontSize: 'var(--mobile-text-sm)', color: 'var(--mobile-gray)', marginBottom: 'var(--mobile-spacing-lg)' }}>
+                Upload supporting documents such as resume, certificates, or licenses. This section is optional.
+              </p>
+
+              {/* File Upload Section */}
+              <div style={{ 
+                background: '#f8fafc', 
+                padding: 'var(--mobile-spacing-md)', 
+                borderRadius: '8px', 
+                marginBottom: 'var(--mobile-spacing-lg)',
+                border: '2px dashed #cbd5e1'
+              }}>
+                <div className="mobile-form-group">
+                  <label className="mobile-form-label">Document Name</label>
+                  <input
+                    type="text"
+                    className="mobile-form-input"
+                    value={documentName}
+                    onChange={(e) => setDocumentName(e.target.value)}
+                    placeholder="e.g., Resume, License Certificate"
+                  />
+                </div>
+
+                <div className="mobile-form-group">
+                  <label className="mobile-form-label">Document Type</label>
+                  <select
+                    className="mobile-form-input mobile-form-select"
+                    value={documentType}
+                    onChange={(e) => setDocumentType(e.target.value)}
+                  >
+                    <option value="resume">Resume</option>
+                    <option value="license">License/Certificate</option>
+                    <option value="reference">Reference Letter</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div className="mobile-form-group">
+                  <label className="mobile-form-label">Select File</label>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="mobile-form-input"
+                    onChange={(e) => setStagedFile(e.target.files[0])}
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  />
+                </div>
+
+                <button 
+                  onClick={handleAddDocument}
+                  className="mobile-btn mobile-btn-secondary"
+                  disabled={!stagedFile || !documentName.trim()}
+                >
+                  Add Document
+                </button>
+              </div>
+
+              {/* Uploaded Documents List */}
+              {formData.documents.length > 0 && (
+                <div>
+                  <h4 style={{ fontSize: 'var(--mobile-text-base)', fontWeight: '600', marginBottom: 'var(--mobile-spacing-md)' }}>
+                    Uploaded Documents ({formData.documents.length})
+                  </h4>
+                  {formData.documents.map((doc, index) => (
+                    <div key={index} style={{ 
+                      background: '#f8fafc', 
+                      padding: 'var(--mobile-spacing-md)', 
+                      borderRadius: '8px', 
+                      marginBottom: 'var(--mobile-spacing-sm)',
+                      border: '1px solid #e2e8f0',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <div>
+                        <p style={{ fontSize: 'var(--mobile-text-sm)', fontWeight: '600', marginBottom: '2px' }}>
+                          {doc.displayName}
+                        </p>
+                        <p style={{ fontSize: 'var(--mobile-text-xs)', color: 'var(--mobile-gray)' }}>
+                          {doc.documentType?.replace('_', ' ')} • Uploaded {doc.uploadedAt ? new Date(doc.uploadedAt.toDate ? doc.uploadedAt.toDate() : doc.uploadedAt).toLocaleDateString() : 'recently'}
+                        </p>
+                      </div>
+                      <button 
+                        onClick={() => removeDocument(index)}
+                        style={{
+                          background: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: 'var(--mobile-text-xs)'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
       case 7: // Review
         return (
           <div className="mobile-card">
@@ -593,18 +1193,6 @@ const MobileApplicationForm = () => {
 
               <p style={{ fontSize: 'var(--mobile-text-xs)', color: 'var(--mobile-gray)', textAlign: 'center' }}>
                 By submitting this application, you confirm that all information provided is accurate and complete.
-              </p>
-            </div>
-          </div>
-        );
-
-      default:
-        return (
-          <div className="mobile-card">
-            <div className="mobile-card-body" style={{ textAlign: 'center', padding: 'var(--mobile-spacing-2xl)' }}>
-              <p>This section is under development for mobile.</p>
-              <p style={{ fontSize: 'var(--mobile-text-sm)', color: 'var(--mobile-gray)', marginTop: 'var(--mobile-spacing-md)' }}>
-                Please use the desktop version to complete these sections.
               </p>
             </div>
           </div>
