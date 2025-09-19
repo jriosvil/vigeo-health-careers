@@ -128,7 +128,12 @@ const JobListings = () => {
           ) : (
             <div className="jobs-grid">
               {filteredJobs.map(job => (
-                <div key={job.id} className="job-card glass-card">
+                <div 
+                  key={job.id} 
+                  className="job-card glass-card"
+                  onClick={() => navigate(`/jobs/${job.id}`)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="job-card-header">
                     <h3 className="job-title">{job.title}</h3>
                     <span className="job-type-badge">{job.type}</span>
@@ -169,29 +174,56 @@ const JobListings = () => {
                     )}
                   </div>
 
-                  {userApplications[job.id] && userApplications[job.id] !== 'draft' ? (
-                    <button 
-                      disabled
-                      className="btn btn-secondary btn-full"
-                      style={{ cursor: 'not-allowed', opacity: 0.7 }}
-                    >
-                      Already Applied ({userApplications[job.id].replace('_', ' ')})
-                    </button>
-                  ) : userApplications[job.id] === 'draft' ? (
-                    <button 
-                      onClick={() => handleApply(job.id, job.title)}
-                      className="btn btn-warning btn-full"
-                    >
-                      Continue Application
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={() => handleApply(job.id, job.title)}
-                      className="btn btn-primary btn-full"
-                    >
-                      Apply Now
-                    </button>
+                  {/* Application Status */}
+                  {userApplications[job.id] && (
+                    <div style={{ 
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      marginBottom: '1rem',
+                      padding: '0.75rem',
+                      background: '#f8fafc',
+                      borderRadius: '0.5rem',
+                      border: `2px solid ${userApplications[job.id] === 'draft' ? '#64748b' : 
+                        userApplications[job.id] === 'submitted' ? '#3b82f6' : 
+                        userApplications[job.id] === 'under_review' ? '#f59e0b' : 
+                        userApplications[job.id] === 'hired' ? '#10b981' : '#ef4444'}`
+                    }}>
+                      <div style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: userApplications[job.id] === 'draft' ? '#64748b' : 
+                          userApplications[job.id] === 'submitted' ? '#3b82f6' : 
+                          userApplications[job.id] === 'under_review' ? '#f59e0b' : 
+                          userApplications[job.id] === 'hired' ? '#10b981' : '#ef4444'
+                      }}></div>
+                      <span style={{ 
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        color: userApplications[job.id] === 'draft' ? '#64748b' : 
+                          userApplications[job.id] === 'submitted' ? '#3b82f6' : 
+                          userApplications[job.id] === 'under_review' ? '#f59e0b' : 
+                          userApplications[job.id] === 'hired' ? '#10b981' : '#ef4444'
+                      }}>
+                        {userApplications[job.id] === 'draft' ? 'Draft Application' : 
+                         `Application ${userApplications[job.id].replace('_', ' ')}`}
+                      </span>
+                    </div>
                   )}
+
+                  {/* View Details */}
+                  <div style={{ 
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    color: 'var(--primary)',
+                    fontSize: '0.875rem',
+                    fontWeight: '600'
+                  }}>
+                    <span>View Details & Apply</span>
+                    <span style={{ fontSize: '1.125rem' }}>→</span>
+                  </div>
                 </div>
               ))}
             </div>

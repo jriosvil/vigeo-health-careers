@@ -139,26 +139,8 @@ const ApplicationFormV2 = () => {
         if (appData.licenses) setFormData(prev => ({ ...prev, licenses: appData.licenses }));
         if (appData.employment) setFormData(prev => ({ ...prev, employment: appData.employment }));
         if (appData.documents) setFormData(prev => ({ ...prev, documents: appData.documents }));
-      } else {
-        // Create new application with unique ID
-        const newAppRef = doc(appsCollection);
-        const newAppData = {
-          jobId,
-          jobTitle,
-          applicantId: currentUser.uid,
-          status: 'draft',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          personal: formData.personal,
-          emergency: formData.emergency,
-          education: [],
-          licenses: [],
-          employment: []
-        };
-        
-        await setDoc(newAppRef, newAppData);
-        setApplicationId(newAppRef.id);
       }
+      // Don't create anything in Firestore yet - only create when explicitly saving
     } catch (error) {
       console.error('Error loading/creating application:', error);
       alert('Error loading application. Please try again.');
@@ -439,16 +421,35 @@ const ApplicationFormV2 = () => {
   };
 
   const saveForLater = async () => {
-    if (!applicationId || saving) return;
+    if (saving) return;
     
     setSaving(true);
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
-      await updateDoc(doc(appsCollection, applicationId), {
-        ...formData,
-        status: 'draft',
-        updatedAt: new Date()
-      });
+      
+      if (applicationId) {
+        // Update existing draft
+        await updateDoc(doc(appsCollection, applicationId), {
+          ...formData,
+          status: 'draft',
+          updatedAt: new Date()
+        });
+      } else {
+        // Create new draft application
+        const newAppRef = doc(appsCollection);
+        const newAppData = {
+          jobId,
+          jobTitle,
+          applicantId: currentUser.uid,
+          status: 'draft',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          ...formData
+        };
+        
+        await setDoc(newAppRef, newAppData);
+        setApplicationId(newAppRef.id);
+      }
       
       alert('Application saved! You can continue later.');
       navigate('/my-applications');
@@ -461,7 +462,7 @@ const ApplicationFormV2 = () => {
   };
 
   const submitApplication = async () => {
-    if (!applicationId || saving || isSubmitting.current) return;
+    if (saving || isSubmitting.current) return;
     
     // Prevent double submission
     isSubmitting.current = true;
@@ -469,12 +470,31 @@ const ApplicationFormV2 = () => {
     
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
-      await updateDoc(doc(appsCollection, applicationId), {
-        ...formData,
-        status: 'new',
-        submittedAt: new Date(),
-        updatedAt: new Date()
-      });
+      
+      if (applicationId) {
+        // Update existing application to submitted
+        await updateDoc(doc(appsCollection, applicationId), {
+          ...formData,
+          status: 'new',
+          submittedAt: new Date(),
+          updatedAt: new Date()
+        });
+      } else {
+        // Create new submitted application
+        const newAppRef = doc(appsCollection);
+        const newAppData = {
+          jobId,
+          jobTitle,
+          applicantId: currentUser.uid,
+          status: 'new',
+          createdAt: new Date(),
+          submittedAt: new Date(),
+          updatedAt: new Date(),
+          ...formData
+        };
+        
+        await setDoc(newAppRef, newAppData);
+      }
       
       alert('Application submitted successfully!');
       navigate('/my-applications');
