@@ -5,6 +5,7 @@
       "http://localhost:3001", 
       "https://vigeoptwebsite.firebaseapp.com",
       "https://careers.vigeohealth.org",
+      "https://careers.vigeopt.com",
       "https://vigeocareers.onrender.com"
     ],
     "method": ["GET", "POST", "PUT", "DELETE"],
