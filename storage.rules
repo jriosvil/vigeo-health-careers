@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow authenticated users to upload/read their own application documents
+    match /VIGEOHealthCareersWebsite/config/applications/{userId}/{jobId}/documents/{document} {
+      allow read: if request.auth != null && (request.auth.uid == userId || request.auth.token.email == 'jriosvil@gmail.com');
+      allow write: if request.auth != null && request.auth.uid == userId
+        && request.resource.size < 10 * 1024 * 1024 // 10MB max file size
+        && request.resource.contentType.matches('image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    }
+    
+    // Deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
