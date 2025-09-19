@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Careers - VIGEO Health{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-5">
+        <h1>Welcome to VIGEO Health Careers</h1>
+        <p class="lead">Find your next opportunity in healthcare</p>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Open Positions</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/setup" class="btn btn-outline-primary">Database Setup</a>
+        </div>
+    </div>
+    
+    {% if jobs %}
+        <div class="row">
+            {% for job in jobs %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ job.title }}</h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                📍 {{ job.location }}<br>
+                                🏢 {{ job.department }}<br>
+                                💼 {{ job.type | title }}
+                            </small>
+                        </p>
+                        <p class="card-text">{{ job.description[:100] }}...</p>
+                        {% if job.salary %}
+                        <p class="text-success fw-bold">
+                            ${{ "{:,}".format(job.salary.min) }} - ${{ "{:,}".format(job.salary.max) }}
+                        </p>
+                        {% endif %}
+                        <button class="btn btn-primary btn-sm">View Details</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4>No job postings available</h4>
+            <p>Visit the <a href="/setup">Database Setup</a> page to add sample job postings.</p>
+        </div>
+    {% endif %}
+    
+    <div class="mt-5 pt-5 border-top">
+        <h3>Why Join VIGEO Health?</h3>
+        <div class="row mt-4">
+            <div class="col-md-3 text-center mb-3">
+                <div class="h1">🏥</div>
+                <h5>Healthcare Excellence</h5>
+                <p class="small">Be part of exceptional home healthcare services</p>
+            </div>
+            <div class="col-md-3 text-center mb-3">
+                <div class="h1">📈</div>
+                <h5>Career Growth</h5>
+                <p class="small">Continuous learning and advancement opportunities</p>
+            </div>
+            <div class="col-md-3 text-center mb-3">
+                <div class="h1">💰</div>
+                <h5>Competitive Benefits</h5>
+                <p class="small">Comprehensive health coverage and retirement plans</p>
+            </div>
+            <div class="col-md-3 text-center mb-3">
+                <div class="h1">⚖️</div>
+                <h5>Work-Life Balance</h5>
+                <p class="small">Flexible schedules for your well-being</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

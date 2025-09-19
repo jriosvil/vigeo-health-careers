@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VIGEO Health Careers{% endblock %}</title>
+    
+    <!-- Bootstrap CSS for quick styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --brand-red: #af2d2c;
+            --brand-dark: #8b2322;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fef7f0 0%, #ffffff 50%, #fdf4f0 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar-brand {
+            color: var(--brand-red) !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--brand-red);
+            border-color: var(--brand-red);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--brand-dark);
+            border-color: var(--brand-dark);
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: none;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: var(--brand-red);
+            color: white;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <span class="logo">VH</span>
+                VIGEO Health Careers
+            </a>
+            
+            {% if session.user_id %}
+            <div class="d-flex align-items-center">
+                <span class="me-3">{{ session.user_email }}</span>
+                <a href="/logout" class="btn btn-outline-danger btn-sm">Logout</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Main Content -->
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

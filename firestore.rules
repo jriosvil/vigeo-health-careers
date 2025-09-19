@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read/write access to the VIGEO Health Careers Website collection
+    // for authenticated users
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Public read access for job postings (optional - for public job board)
+    match /VIGEO Health Careers Website/jobPostings/{document=**} {
+      allow read: if true;
+    }
+    
+    // Allow initialization of the database structure (temporary - remove after setup)
+    match /VIGEO Health Careers Website/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
