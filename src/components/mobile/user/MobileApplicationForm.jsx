@@ -192,27 +192,31 @@ const MobileApplicationForm = () => {
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
       
+      // Create clean application data
+      const applicationData = {
+        jobId,
+        jobTitle,
+        applicantId: currentUser.uid,
+        status: 'draft',
+        updatedAt: new Date(),
+        personal: formData.personal,
+        emergency: formData.emergency,
+        education: formData.education,
+        licenses: formData.licenses,
+        employment: formData.employment,
+        documents: formData.documents
+      };
+      
       if (applicationId) {
         // Update existing draft
         const appRef = doc(appsCollection, applicationId);
-        await updateDoc(appRef, {
-          ...formData,
-          updatedAt: new Date()
-        });
+        await updateDoc(appRef, applicationData);
       } else {
         // Create new draft application
         const newAppRef = doc(appsCollection);
-        const newAppData = {
-          jobId,
-          jobTitle,
-          applicantId: currentUser.uid,
-          status: 'draft',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          ...formData
-        };
+        applicationData.createdAt = new Date();
         
-        await setDoc(newAppRef, newAppData);
+        await setDoc(newAppRef, applicationData);
         setApplicationId(newAppRef.id);
       }
       
@@ -244,30 +248,32 @@ const MobileApplicationForm = () => {
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
       
+      // Create clean application data
+      const applicationData = {
+        jobId,
+        jobTitle,
+        applicantId: currentUser.uid,
+        status: 'submitted',
+        submittedAt: new Date(),
+        updatedAt: new Date(),
+        personal: formData.personal,
+        emergency: formData.emergency,
+        education: formData.education,
+        licenses: formData.licenses,
+        employment: formData.employment,
+        documents: formData.documents
+      };
+      
       if (applicationId) {
         // Update existing application to submitted
         const appRef = doc(appsCollection, applicationId);
-        await updateDoc(appRef, {
-          ...formData,
-          status: 'submitted',
-          submittedAt: new Date(),
-          updatedAt: new Date()
-        });
+        await updateDoc(appRef, applicationData);
       } else {
         // Create new submitted application
         const newAppRef = doc(appsCollection);
-        const newAppData = {
-          jobId,
-          jobTitle,
-          applicantId: currentUser.uid,
-          status: 'submitted',
-          createdAt: new Date(),
-          submittedAt: new Date(),
-          updatedAt: new Date(),
-          ...formData
-        };
+        applicationData.createdAt = new Date();
         
-        await setDoc(newAppRef, newAppData);
+        await setDoc(newAppRef, applicationData);
       }
       
       alert('Application submitted successfully!');
