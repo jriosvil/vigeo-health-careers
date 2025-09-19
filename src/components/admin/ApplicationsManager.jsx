@@ -86,13 +86,10 @@ const ApplicationsManager = () => {
 
   const downloadApplication = async (application) => {
     try {
-      console.log('Starting PDF generation for application:', application.id);
       // Generate professional PDF
-      const result = await generateApplicationPDF(application);
-      console.log('PDF generation result:', result);
+      await generateApplicationPDF(application);
     } catch (error) {
-      console.error('Error generating PDF - full error:', error);
-      console.error('Error stack:', error.stack);
+      console.error('Error generating PDF:', error);
       alert('Failed to generate PDF. Downloading as text file instead.');
       
       // Fallback to text download if PDF fails

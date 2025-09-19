@@ -20,5 +20,14 @@ export default defineConfig({
       '.vigeohealth.org',
       '.vigeopt.com'
     ]
+  },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
   }
 });

@@ -287,9 +287,6 @@ const MobileApplicationForm = () => {
         documents: cleanDocuments
       };
       
-      // Debug log to see what's being sent
-      console.log('Submitting application data:', applicationData);
-      console.log('Documents array:', cleanDocuments);
       
       if (applicationId) {
         // Update existing application to submitted
