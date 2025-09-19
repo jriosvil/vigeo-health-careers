@@ -1,93 +1,57 @@
 # VIGEO Health Careers Portal
 
-A modern careers portal for VIGEO Health built with React and Firebase, featuring authentication and job listings management.
+A comprehensive job application and management system for VIGEO Health.
 
 ## Features
 
-- **User Authentication**: Secure login and signup system
 - **Job Listings**: Browse and search available positions
-- **Responsive Design**: Mobile-friendly interface following VIGEO Health brand guidelines
-- **Firebase Integration**: Real-time database with Firestore
-- **Role-based Access**: Different views for applicants and administrators
+- **User Authentication**: Secure login with Firebase Authentication
+- **Application System**: Multi-step application form with draft saving
+- **Document Upload**: Support for resumes, licenses, and certifications
+- **Admin Dashboard**: Manage job postings and review applications
+- **PDF Generation**: Download applications as professional PDFs
+- **Responsive Design**: Works on desktop and mobile devices
 
-## Setup Instructions
+## Technology Stack
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Configure Firebase**
-   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com)
-   - Enable Authentication (Email/Password)
-   - Create a Firestore database
-   - Copy your Firebase configuration
-   - Update `src/firebase/config.js` with your Firebase credentials
-
-3. **Initialize Database Structure**
-   - The database uses a top-level collection called `VIGEO Health Careers Website`
-   - Subcollections include: users, jobPostings, applications, departments, savedJobs
-
-4. **Run Development Server**
-   ```bash
-   npm run dev
-   ```
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── auth/          # Login and Signup components
-│   ├── home/          # Home page and job listings
-│   └── layout/        # Navigation and layout components
-├── contexts/          # React contexts (Authentication)
-├── firebase/          # Firebase configuration and schema
-├── styles/            # CSS styles following VIGEO Health brand
-├── App.jsx            # Main app component with routing
-└── main.jsx          # Entry point
-```
-
-## Database Schema
-
-### Top Collection: `VIGEO Health Careers Website`
-
-All data is organized under this single top-level collection.
-
-### Subcollections:
-- **users**: User profiles and authentication data
-- **jobPostings**: Available job positions
-- **applications**: Job applications from candidates
-- **departments**: Organization departments
-- **savedJobs**: User's saved job listings
-
-## Technologies Used
-
-- React 18
-- Firebase (Authentication & Firestore)
-- React Router v6
-- Vite (Build tool)
-- CSS3 with custom properties
-
-## Brand Guidelines
-
-The application follows VIGEO Health's brand guidelines with:
-- Brand colors: #af2d2c (primary red), #8b2322 (dark variant)
-- Montserrat font family
-- Glass morphism design elements
-- Cozy healthcare aesthetic with warm tones
+- React 18 with Vite
+- Firebase (Authentication, Firestore, Storage)
+- React Router for navigation
+- jsPDF for PDF generation
+- CSS3 for styling
 
 ## Deployment
 
-1. Build the production version:
-   ```bash
-   npm run build
-   ```
+This application is deployed on Render at:
+- Production: https://vigeocareers.onrender.com
+- Custom Domain: careers.vigeohealth.org (pending DNS configuration)
 
-2. Deploy the `dist` folder to your hosting service
+## Environment Variables
 
-## Security Notes
+Required for deployment:
+- `NODE_VERSION`: 18
 
-- Never commit Firebase credentials to version control
-- Use environment variables for sensitive configuration
-- Enable Firebase Security Rules to protect data access
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Production Build
+
+```bash
+npm run build
+npm start
+```
+
+## Firebase Configuration
+
+Ensure Firebase Authentication domains are configured to include:
+- localhost:3000 (development)
+- vigeocareers.onrender.com
+- careers.vigeohealth.org
+
+---
+
+© 2025 VIGEO Health. All rights reserved.
