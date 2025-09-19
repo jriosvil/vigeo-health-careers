@@ -24,6 +24,7 @@ const MobileApplicationForm = () => {
   const [documentType, setDocumentType] = useState('license');
   const [uploadingFile, setUploadingFile] = useState(false);
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -438,6 +439,9 @@ const MobileApplicationForm = () => {
       setDocumentName('');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
+      }
+      if (cameraInputRef.current) {
+        cameraInputRef.current.value = '';
       }
     } catch (error) {
       console.error('Error adding document:', error);
@@ -1180,15 +1184,65 @@ const MobileApplicationForm = () => {
                 </div>
 
                 <div className="mobile-form-group">
-                  <label className="mobile-form-label">Select File or Take Photo</label>
+                  <label className="mobile-form-label">Add File</label>
+                  
+                  {/* Hidden file inputs */}
                   <input
                     ref={fileInputRef}
                     type="file"
-                    className="mobile-form-input"
-                    onChange={(e) => setStagedFile(e.target.files[0])}
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        setStagedFile(e.target.files[0]);
+                      }
+                    }}
                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,image/*"
-                    capture="environment"
                   />
+                  
+                  <input
+                    ref={cameraInputRef}
+                    type="file"
+                    style={{ display: 'none' }}
+                    capture="environment"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        setStagedFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                  
+                  {/* Visible buttons */}
+                  <div style={{ display: 'flex', gap: 'var(--mobile-spacing-sm)' }}>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="mobile-btn mobile-btn-outline"
+                      style={{ flex: 1, padding: 'var(--mobile-spacing-md)', fontSize: 'var(--mobile-text-sm)' }}
+                    >
+                      📁 Choose File
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => cameraInputRef.current?.click()}
+                      className="mobile-btn mobile-btn-outline"
+                      style={{ flex: 1, padding: 'var(--mobile-spacing-md)', fontSize: 'var(--mobile-text-sm)' }}
+                    >
+                      📷 Take Photo
+                    </button>
+                  </div>
+                  
+                  {stagedFile && (
+                    <div style={{ 
+                      marginTop: 'var(--mobile-spacing-sm)', 
+                      padding: 'var(--mobile-spacing-sm)',
+                      background: '#e0f2fe',
+                      borderRadius: '6px',
+                      fontSize: 'var(--mobile-text-xs)'
+                    }}>
+                      Selected: {stagedFile.name || 'photo.jpg'}
+                    </div>
+                  )}
                 </div>
 
                 <button 
