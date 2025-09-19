@@ -192,6 +192,14 @@ const MobileApplicationForm = () => {
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
       
+      // Clean documents array to ensure no File objects
+      const cleanDocuments = formData.documents.map(doc => ({
+        displayName: doc.displayName || '',
+        documentType: doc.documentType || 'other',
+        fileData: doc.fileData || '',
+        uploadedAt: doc.uploadedAt || new Date().toISOString()
+      }));
+      
       // Create clean application data
       const applicationData = {
         jobId,
@@ -204,7 +212,7 @@ const MobileApplicationForm = () => {
         education: formData.education,
         licenses: formData.licenses,
         employment: formData.employment,
-        documents: formData.documents
+        documents: cleanDocuments
       };
       
       if (applicationId) {
@@ -248,6 +256,14 @@ const MobileApplicationForm = () => {
     try {
       const appsCollection = collection(db, collections.VIGEO_HEALTH_CAREERS, 'config', 'applications');
       
+      // Clean documents array to ensure no File objects
+      const cleanDocuments = formData.documents.map(doc => ({
+        displayName: doc.displayName || '',
+        documentType: doc.documentType || 'other',
+        fileData: doc.fileData || '',
+        uploadedAt: doc.uploadedAt || new Date().toISOString()
+      }));
+      
       // Create clean application data
       const applicationData = {
         jobId,
@@ -261,8 +277,12 @@ const MobileApplicationForm = () => {
         education: formData.education,
         licenses: formData.licenses,
         employment: formData.employment,
-        documents: formData.documents
+        documents: cleanDocuments
       };
+      
+      // Debug log to see what's being sent
+      console.log('Submitting application data:', applicationData);
+      console.log('Documents array:', cleanDocuments);
       
       if (applicationId) {
         // Update existing application to submitted
@@ -1087,13 +1107,14 @@ const MobileApplicationForm = () => {
                 </div>
 
                 <div className="mobile-form-group">
-                  <label className="mobile-form-label">Select File</label>
+                  <label className="mobile-form-label">Select File or Take Photo</label>
                   <input
                     ref={fileInputRef}
                     type="file"
                     className="mobile-form-input"
                     onChange={(e) => setStagedFile(e.target.files[0])}
-                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,image/*"
+                    capture="environment"
                   />
                 </div>
 
